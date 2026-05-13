@@ -1,0 +1,477 @@
+<!-- 
+ AI Citation
+ Description: Calendar page template
+ AI Use: Generated with GPT 5.2 on 2025-03-14.
+ Prompt: "Using this image of a color theme, and this example layout, generate a UI for [all] our tabs"
+ Notes: Used this prompt in Cursor to generate base CSS styling and UI for our pages.
+-->
+
+{% extends "base_app.html" %}
+{% block title %}Calendar | SportsCIO{% endblock %}
+{% block page_heading %}Calendar{% endblock %}
+{% block page_sub %}{% endblock %}
+{% block extra_css %}
+<style>
+    .cal-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+    .cal-nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .cal-nav h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--c-ink);
+        min-width: 200px;
+        text-align: center;
+    }
+    .month-btn {
+        appearance: none;
+        border: 1px solid rgba(202, 207, 214, 0.9);
+        background: transparent;
+        font: inherit;
+        cursor: pointer;
+        padding: 8px 14px;
+        border-radius: 14px;
+        font-weight: 800;
+        color: var(--c-ink);
+    }
+    .month-btn:hover { background: rgba(159, 216, 203, 0.18); }
+    .cal-nav a {
+        text-decoration: none;
+        color: var(--c-forest);
+        font-weight: 700;
+        padding: 8px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(81, 118, 100, 0.4);
+        background: var(--c-white);
+        font-size: 0.92rem;
+    }
+    .cal-nav a:hover {
+        background: rgba(159, 216, 203, 0.25);
+    }
+
+    .month-pop {
+        position: fixed;
+        display: none;
+        width: 320px;
+        background: var(--c-white);
+        border: 1px solid rgba(202, 207, 214, 0.8);
+        border-radius: 18px;
+        box-shadow: var(--shadow-soft);
+        padding: 14px;
+        z-index: 50;
+    }
+    .month-pop.open { display: block; }
+    .month-pop label { display:block; font-weight: 700; margin: 0 0 6px; color: var(--c-ink); }
+    .month-pop select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(81, 118, 100, 0.35);
+        background: var(--c-white);
+        font: inherit;
+    }
+    .month-pop .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .month-pop .actions { display:flex; justify-content:flex-end; gap: 10px; margin-top: 12px; }
+    .cal-shell {
+        background: var(--c-white);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(202, 207, 214, 0.7);
+        overflow: hidden;
+    }
+    .cal-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        background: linear-gradient(180deg, rgba(214,229,227,0.65), rgba(202,207,214,0.35));
+        border-bottom: 1px solid rgba(202, 207, 214, 0.9);
+    }
+    .cal-weekdays div {
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #5c6b63;
+    }
+    .cal-week {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        min-height: 0;
+    }
+    .cal-week + .cal-week {
+        border-top: 1px solid rgba(202, 207, 214, 0.65);
+    }
+    .cal-day {
+        /* Fixed height keeps the month grid from "stretching" when days have many events */
+        height: 124px;
+        min-height: 112px;
+        padding: 6px 8px 8px;
+        border-right: 1px solid rgba(202, 207, 214, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        background: var(--c-white);
+    }
+    .cal-day:nth-child(7n) {
+        border-right: none;
+    }
+    .cal-day-muted {
+        background: linear-gradient(180deg, #f3f5f4, #eef1f0);
+    }
+    .cal-day-muted .cal-day-num {
+        color: #a8b4ae;
+    }
+    .cal-day-today {
+        background: linear-gradient(180deg, rgba(159, 216, 203, 0.35), rgba(214, 229, 227, 0.2));
+        box-shadow: inset 0 0 0 2px rgba(81, 118, 100, 0.45);
+    }
+    .cal-day-today .cal-day-num {
+        background: var(--c-forest);
+        color: #f7faf9;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+    .cal-day-num {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--c-ink);
+        align-self: flex-end;
+        margin-bottom: 2px;
+    }
+    .cal-day-events {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-height: 0;
+        overflow: hidden;
+    }
+    .cal-event {
+        font-size: 0.68rem;
+        line-height: 1.15;
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: rgba(159, 216, 203, 0.55);
+        color: var(--c-ink);
+        border-left: 3px solid var(--c-forest);
+        cursor: default;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        height: 22px;
+    }
+    .cal-event .evt-main {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+        flex: 1 1 auto;
+    }
+    .cal-event .evt-actions {
+        display: none;
+        gap: 6px;
+        flex-shrink: 0;
+        align-items: center;
+    }
+    .cal-event:hover .evt-actions { display: inline-flex; }
+    .evt-actions a, .evt-actions button {
+        font: inherit;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: 0 2px;
+        color: rgba(45, 51, 25, 0.75);
+        text-decoration: none;
+        font-weight: 800;
+    }
+    .evt-actions a:hover, .evt-actions button:hover { color: var(--c-ink); }
+
+    /* Event details popover (Google Calendar-style, simple) */
+    .evt-details-row { display:flex; gap:12px; align-items:flex-start; margin: 10px 0 0; }
+    .evt-details-ico { width: 28px; height: 28px; border-radius: 10px; display:flex; align-items:center; justify-content:center; background: rgba(159, 216, 203, 0.22); color: var(--c-forest); font-weight: 900; flex-shrink: 0; }
+    .evt-details-row .muted { margin: 0; }
+    /* Event type colors */
+    .cal-event.type-open_practice { background: rgba(219, 39, 119, 0.18); border-left-color: #db2777; }
+    .cal-event.type-team_practice { background: rgba(59, 130, 246, 0.18); border-left-color: #2563eb; }
+    .cal-event.type-social { background: rgba(34, 197, 94, 0.18); border-left-color: #16a34a; }
+    .cal-event.type-tournament { background: rgba(249, 115, 22, 0.20); border-left-color: #ea580c; }
+    .cal-event-time {
+        font-weight: 700;
+        margin-right: 4px;
+        color: var(--c-forest);
+    }
+    .cal-more {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #6b7a72;
+        padding-left: 2px;
+    }
+    @media (max-width: 700px) {
+        .cal-day { height: 96px; min-height: 88px; padding: 4px; }
+        .cal-event { font-size: 0.62rem; }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="cal-toolbar">
+    <div class="cal-nav">
+        <a href="?year={{ cal_year|add:'-1' }}&month={{ cal_month }}" aria-label="Previous year">⇤</a>
+        <a href="?year={{ prev_y }}&month={{ prev_m }}" aria-label="Previous month">←</a>
+        <button type="button" class="month-btn" id="month-picker-btn" aria-haspopup="dialog" aria-expanded="false">{{ month_label }}</button>
+        <a href="?year={{ next_y }}&month={{ next_m }}" aria-label="Next month">→</a>
+        <a href="?year={{ cal_year|add:'1' }}&month={{ cal_month }}" aria-label="Next year">⇥</a>
+        <a href="?year={{ today.year }}&month={{ today.month }}">Today</a>
+    </div>
+    <div class="month-pop" id="month-pop" role="dialog" aria-label="Choose month and year">
+        <form method="get" action="" id="month-pop-form">
+            <div class="row">
+                <div>
+                    <label for="pop-month">Month</label>
+                    <select id="pop-month" name="month">
+                        <option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option>
+                        <option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option>
+                        <option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="pop-year">Year</label>
+                    <select id="pop-year" name="year"></select>
+                </div>
+            </div>
+            <div class="actions">
+                <button type="button" class="btn-secondary" id="pop-cancel" style="padding:10px 14px; border-radius:14px;">Cancel</button>
+                <button type="submit" class="btn-primary" style="padding:10px 14px; border-radius:14px;">Go</button>
+            </div>
+        </form>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        {% if is_privileged %}
+        <a class="btn-primary" href="{% url 'new_event' %}">Create event</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="cal-shell">
+    <div class="cal-weekdays" role="row">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+    </div>
+    {% for week in calendar_weeks %}
+    <div class="cal-week" role="row">
+        {% for day in week %}
+        <div class="cal-day {% if not day.in_month %}cal-day-muted{% endif %} {% if day.is_today %}cal-day-today{% endif %}">
+            <div class="cal-day-num">{{ day.date.day }}</div>
+            <div class="cal-day-events">
+                {% for e in day.events|slice:":4" %}
+                <div class="cal-event type-{{ e.event_type|default:'' }}"
+                     data-evt-title="{{ e.title|escape }}"
+                     data-evt-full-start="{{ e.start_time|date:'c' }}"
+                     data-evt-full-end="{{ e.end_time|date:'c' }}"
+                     data-evt-start="{{ e.segment_start|date:'c' }}"
+                     data-evt-end="{{ e.segment_end|date:'c' }}"
+                     data-evt-location="{{ e.location|default:''|escape }}"
+                     data-evt-type="{{ e.event_type|default:''|escape }}"
+                     title="{{ e.title }} — {{ e.start_time|date:'M j, g:i A' }} to {{ e.end_time|date:'M j, g:i A' }}{% if e.location %} — {{ e.location }}{% endif %}{% if e.description %} — {{ e.description|truncatewords:20 }}{% endif %}">
+                    <div class="evt-main" role="button" tabindex="0" aria-label="View event details">
+                        <span class="cal-event-time">{{ e.segment_start|date:"g:i A" }}</span>{{ e.title|truncatechars:24 }}
+                    </div>
+                    {% if is_privileged %}
+                    <div class="evt-actions" aria-label="Event actions">
+                        <a href="{% url 'event_edit' e.id %}" title="Edit">✎</a>
+                        <form method="post" action="{% url 'event_delete' e.id %}" style="display:inline;" data-confirm="Delete this event?">
+                            {% csrf_token %}
+                            <button type="submit" title="Delete">🗑</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                {% if day.events|length > 4 %}
+                <div class="cal-more">+{{ day.events|length|add:'-4' }} more</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<div class="modal-overlay" id="evt-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="evt-title">
+        <div class="modal-head" style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <h3 id="evt-title" style="margin:0;">Event</h3>
+            <button type="button" class="btn-secondary" id="evt-close" style="padding:8px 12px; border-radius:12px;">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="evt-details-row">
+                <div class="evt-details-ico">🗓</div>
+                <p class="muted" id="evt-when" style="font-size:0.95rem;"></p>
+            </div>
+            <div class="evt-details-row">
+                <div class="evt-details-ico">📍</div>
+                <p class="muted" id="evt-where" style="font-size:0.95rem;"></p>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="evt-ok">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(() => {
+    // Month/year picker (centered on the month button)
+    const monthBtn = document.getElementById('month-picker-btn');
+    const monthPop = document.getElementById('month-pop');
+    const popMonth = document.getElementById('pop-month');
+    const popYear = document.getElementById('pop-year');
+    const popCancel = document.getElementById('pop-cancel');
+    if (monthBtn && monthPop && popMonth && popYear && popCancel) {
+        const currentMonth = {{ cal_month }};
+        const currentYear = {{ cal_year }};
+        popMonth.value = String(currentMonth);
+
+        // Build a reasonable year range around current
+        const minY = Math.max(1970, currentYear - 10);
+        const maxY = Math.min(2100, currentYear + 10);
+        popYear.innerHTML = '';
+        for (let y = minY; y <= maxY; y++) {
+            const opt = document.createElement('option');
+            opt.value = String(y);
+            opt.textContent = String(y);
+            if (y === currentYear) opt.selected = true;
+            popYear.appendChild(opt);
+        }
+
+        function positionPop() {
+            const r = monthBtn.getBoundingClientRect();
+            const w = monthPop.offsetWidth || 320;
+            const top = r.bottom + 10;
+            const left = Math.max(12, (r.left + (r.width / 2) - (w / 2)));
+            monthPop.style.top = `${top}px`;
+            monthPop.style.left = `${left}px`;
+        }
+        function openPop() {
+            positionPop();
+            monthPop.classList.add('open');
+            monthBtn.setAttribute('aria-expanded', 'true');
+            popMonth.focus();
+        }
+        function closePop() {
+            monthPop.classList.remove('open');
+            monthBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        monthBtn.addEventListener('click', () => {
+            if (monthPop.classList.contains('open')) closePop();
+            else openPop();
+        });
+        popCancel.addEventListener('click', closePop);
+        window.addEventListener('resize', () => { if (monthPop.classList.contains('open')) positionPop(); });
+        document.addEventListener('click', (e) => {
+            if (!monthPop.classList.contains('open')) return;
+            if (e.target.closest('#month-pop') || e.target.closest('#month-picker-btn')) return;
+            closePop();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && monthPop.classList.contains('open')) closePop();
+        });
+    }
+
+    const overlay = document.getElementById('evt-overlay');
+    const titleEl = document.getElementById('evt-title');
+    const whenEl = document.getElementById('evt-when');
+    const whereEl = document.getElementById('evt-where');
+    const closeBtn = document.getElementById('evt-close');
+    const okBtn = document.getElementById('evt-ok');
+    if (!overlay || !titleEl || !whenEl || !whereEl || !closeBtn || !okBtn) return;
+
+    const DISPLAY_TZ = 'America/New_York';
+
+    function open() {
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        okBtn.focus();
+    }
+    function close() {
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    function fmtRange(startIso, endIso) {
+        const start = new Date(startIso);
+        const end = new Date(endIso);
+        const date = start.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: DISPLAY_TZ });
+        const t1 = start.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', timeZone: DISPLAY_TZ });
+        const t2 = end.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', timeZone: DISPLAY_TZ });
+        return `${date} · ${t1} – ${t2}`;
+    }
+
+    function handleOpenFromChip(chip) {
+        const title = chip.dataset.evtTitle || 'Event';
+        const startIso = chip.dataset.evtFullStart || chip.dataset.evtStart;
+        const endIso = chip.dataset.evtFullEnd || chip.dataset.evtEnd;
+        const loc = (chip.dataset.evtLocation || '').trim();
+
+        titleEl.textContent = title;
+        whenEl.textContent = (startIso && endIso) ? fmtRange(startIso, endIso) : '';
+        whereEl.textContent = loc || 'Location TBD';
+        open();
+    }
+
+    document.addEventListener('click', (e) => {
+        const main = e.target.closest('.cal-event .evt-main');
+        if (!main) return;
+        // Prevent opening when clicking edit/delete controls
+        if (e.target.closest('.evt-actions')) return;
+        const chip = main.closest('.cal-event');
+        if (!chip) return;
+        handleOpenFromChip(chip);
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+        if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.classList && e.target.classList.contains('evt-main')) {
+            e.preventDefault();
+            const chip = e.target.closest('.cal-event');
+            if (chip) handleOpenFromChip(chip);
+        }
+    });
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) close();
+    });
+    closeBtn.addEventListener('click', close);
+    okBtn.addEventListener('click', close);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,153 @@
+<!-- 
+ AI Citation
+ Description: Base app page template
+ AI Use: Generated with GPT 5.2 on 2025-03-14.
+ Prompt: "Using this image of a color theme, and this example layout, generate a UI for [all] our tabs"
+ Notes: Used this prompt in Cursor to generate base CSS styling and UI for our pages.
+-->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UVA Pickleball Club{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'sportscio/theme.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="theme-app">
+<div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+        <div class="sidebar-brand">
+            <img class="brand-mark" src="{% static 'sportscio/uva-pickleball-logo-v3.png' %}" alt="UVA Pickleball Club" width="28" height="28">
+            <span>UVA Pickleball</span>
+        </div>
+        <a class="nav-item {% if nav_active == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+            <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Home
+        </a>
+        <a class="nav-item {% if nav_active == 'calendar' %}active{% endif %}" href="{% url 'calendar' %}">
+            <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Calendar
+        </a>
+        <a class="nav-item {% if nav_active == 'announcements' %}active{% endif %}" href="{% url 'announcements' %}">
+            <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Announcements
+        </a>
+        <a class="nav-item {% if nav_active == 'messages' %}active{% endif %}" href="{% url 'messages' %}">
+            <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Messaging
+        </a>
+        {% if is_privileged %}
+        <a class="nav-item {% if nav_active == 'messages_admin' %}active{% endif %}" href="{% url 'messages_admin' %}">
+            <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Admin chat
+        </a>
+        {% endif %}
+        <a class="nav-item {% if nav_active == 'members' %}active{% endif %}" href="{% url 'members' %}">
+            <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Members
+        </a>
+        <a class="nav-item {% if nav_active == 'documents' %}active{% endif %}" href="{% url 'documents' %}">
+            <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Documents
+        </a>
+        <a class="nav-item {% if nav_active == 'profile' %}active{% endif %}" href="{% url 'profile_settings' %}">
+            <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+        </a>
+    </aside>
+    <div class="main-wrap">
+        <header class="top-bar">
+            <div>
+                <h1>{% block page_heading %}Dashboard{% endblock %}</h1>
+                <p class="sub">{% block page_sub %}{% endblock %}</p>
+            </div>
+            <div class="top-bar-actions">
+                <a class="user-pill" href="{% url 'profile_settings' %}">
+                    {% if user_profile_obj and user_profile_obj.avatar %}
+                    <img class="avatar avatar-img" src="{{ user_profile_obj.avatar.url }}" alt="" width="36" height="36">
+                    {% else %}
+                    <span class="avatar" aria-hidden="true">{% with n=user.get_full_name|default:user.username %}{{ n|slice:":1"|upper }}{% endwith %}</span>
+                    {% endif %}
+                    <span>{{ user.get_full_name|default:user.username }}</span>
+                </a>
+                <form class="logout-form" action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Log out</button>
+                </form>
+            </div>
+        </header>
+        <main class="content-area">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+<div class="modal-overlay" id="confirm-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="modal-head">
+            <h3 id="confirm-title">Confirm</h3>
+        </div>
+        <div class="modal-body">
+            <p id="confirm-message" style="margin:0;"></p>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="confirm-no">No</button>
+            <button type="button" class="btn-primary" id="confirm-yes">Yes</button>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}{% endblock %}
+<script>
+(() => {
+    const overlay = document.getElementById('confirm-overlay');
+    const msg = document.getElementById('confirm-message');
+    const noBtn = document.getElementById('confirm-no');
+    const yesBtn = document.getElementById('confirm-yes');
+    if (!overlay || !msg || !noBtn || !yesBtn) return;
+
+    let pendingForm = null;
+
+    function close() {
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        pendingForm = null;
+    }
+    function open(message, formEl) {
+        pendingForm = formEl;
+        msg.textContent = message || 'Are you sure?';
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        noBtn.focus();
+    }
+
+    document.addEventListener('submit', (e) => {
+        const form = e.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        const message = form.getAttribute('data-confirm');
+        if (!message) return;
+        e.preventDefault();
+        open(message, form);
+    });
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) close();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+    });
+    noBtn.addEventListener('click', close);
+    yesBtn.addEventListener('click', () => {
+        if (pendingForm) pendingForm.submit();
+        close();
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!-- 
+ AI Citation
+ Description: Edit event page template
+ AI Use: Generated with GPT 5.2 on 2025-03-14.
+ Prompt: "Using this image of a color theme, and this example layout, generate a UI for [all] our tabs"
+ Notes: Used this prompt in Cursor to generate base CSS styling and UI for our pages.
+-->
+
+
+{% extends "base_app.html" %}
+{% block title %}Edit event | SportsCIO{% endblock %}
+{% block page_heading %}Edit event{% endblock %}
+{% block page_sub %}{% endblock %}
+{% block extra_css %}
+<style>
+  .form-card .field { margin-bottom: 16px; }
+  .form-card label { display:block; font-weight:600; margin-bottom:6px; }
+  .form-card input, .form-card textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(81, 118, 100, 0.35);
+    font: inherit;
+  }
+  .form-card textarea { min-height: 100px; resize: vertical; }
+  .err { background:#fee2e2; color:#991b1b; padding:12px 14px; border-radius:12px; margin-bottom:14px; border:1px solid #fecaca; }
+  .row-btns { display:flex; gap:12px; flex-wrap:wrap; margin-top: 8px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="card form-card">
+  {% if error %}<div class="err">{{ error }}</div>{% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" required value="{{ event.title }}">
+    </div>
+    <div class="field">
+      <label for="start_time">Start</label>
+      <input type="datetime-local" id="start_time" name="start_time" required value="{{ event.start_time|date:'Y-m-d\\TH:i' }}">
+    </div>
+    <div class="field">
+      <label for="end_time">End</label>
+      <input type="datetime-local" id="end_time" name="end_time" required value="{{ event.end_time|date:'Y-m-d\\TH:i' }}">
+    </div>
+    <div class="field">
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" maxlength="200" value="{{ event.location }}" placeholder="e.g. Mem Gym Court 2">
+    </div>
+    <div class="field">
+      <label for="event_type">Type</label>
+      <select id="event_type" name="event_type"
+              style="width:100%; padding:12px 14px; border-radius:14px; border:1px solid rgba(81,118,100,0.35); font:inherit; background:var(--c-white);">
+        <option value="" {% if not event.event_type %}selected{% endif %}>—</option>
+        <option value="open_practice" {% if event.event_type == 'open_practice' %}selected{% endif %}>Open practice</option>
+        <option value="team_practice" {% if event.event_type == 'team_practice' %}selected{% endif %}>Club team practice</option>
+        <option value="social" {% if event.event_type == 'social' %}selected{% endif %}>Social event</option>
+        <option value="tournament" {% if event.event_type == 'tournament' %}selected{% endif %}>Tournament</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="description">Description</label>
+      <textarea id="description" name="description">{{ event.description }}</textarea>
+    </div>
+    <div class="row-btns">
+      <button type="submit" class="btn-primary">Save</button>
+      <a href="{% url 'calendar' %}" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+<!-- 
+ AI Citation
+ Description: Profile settings page template
+ AI Use: Generated with GPT 5.2 on 2025-03-14.
+ Prompt: "Using this image of a color theme, and this example layout, generate a UI for [all] our tabs"
+ Notes: Used this prompt in Cursor to generate base CSS styling and UI for our pages.
+-->
+
+{% extends "base_app.html" %}
+{% block title %}Profile settings | SportsCIO{% endblock %}
+{% block page_heading %}Profile settings{% endblock %}
+{% block page_sub %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 800px) { .settings-grid { grid-template-columns: 1fr; } }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px; color: var(--c-ink); }
+    .field input[type="text"], .field input[type="date"], .field input[type="file"] {
+        width: 100%; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(81, 118, 100, 0.35); font: inherit;
+    }
+    .avatar-preview { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(81, 118, 100, 0.35); display: block; margin-bottom: 12px; background: var(--c-mist); }
+    .checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; }
+    .checkbox-group input { width: 18px; height: 18px; cursor: pointer; }
+    .readonly-block { background: linear-gradient(180deg, rgba(214,229,227,0.4), rgba(202,207,214,0.2)); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+    .readonly-block .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7a72; margin-bottom: 4px; }
+    .readonly-block .val { font-weight: 600; color: var(--c-ink); }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'profile_settings' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="settings-grid">
+        <div class="card">
+            <h2 style="margin-top:0;">Identity</h2>
+            {% if user.profile.avatar %}
+                <img class="avatar-preview" src="{{ user.profile.avatar.url }}" alt="Current profile photo">
+            {% endif %}
+            <div class="field">
+                <label for="avatar">Profile photo</label>
+                <input type="file" id="avatar" name="avatar" accept="image/*">
+            </div>
+            <div class="field">
+                <label for="first_name">First name</label>
+                <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" maxlength="150">
+            </div>
+            <div class="field">
+                <label for="last_name">Last name</label>
+                <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" maxlength="150">
+            </div>
+            <div class="field">
+                <label for="birthday">Birthday</label>
+                <input type="date" id="birthday" name="birthday" value="{% if user.profile.birthday %}{{ user.profile.birthday|date:'Y-m-d' }}{% endif %}">
+            </div>
+            <button type="submit" class="btn-primary">Save changes</button>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-top:0;">Notifications</h2>
+            <label class="checkbox-group">
+                <input type="checkbox" name="email_notifications" {% if user.profile.email_notifications %}checked{% endif %}>
+                <span>Email alerts for announcements & events</span>
+            </label>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+
+            <h2 style="margin-top:0;">Account</h2>
+            <div class="readonly-block">
+                <div class="label">Username</div>
+                <div class="val">{{ user.username }}</div>
+            </div>
+            <div class="readonly-block">
+                <div class="label">Role</div>
+                <div class="val">{{ user.profile.get_role_display }}</div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

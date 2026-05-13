@@ -1,0 +1,63 @@
+<!-- 
+ AI Citation
+ Description: Dashboard page template
+ AI Use: Generated with GPT 5.2 on 2025-03-14.
+ Prompt: "Using this image of a color theme, and this example layout, generate a UI for [all] our tabs"
+ Notes: Used this prompt in Cursor to generate base CSS styling and UI for our pages.
+-->
+
+{% extends "base_app.html" %}
+{% block title %}Home | SportsCIO{% endblock %}
+{% block page_heading %}Welcome back, {{ user.first_name|default:user.username }}{% endblock %}
+{% block page_sub %}{% endblock %}
+{% block content %}
+<div class="card-grid card-grid--dashboard">
+    <div class="card card--dash-announcements">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
+            <h2 style="margin:0;">Recent announcements</h2>
+            <span class="pill pill-mint">Live</span>
+        </div>
+        {% if announcements %}
+        <ul class="list-rows">
+            {% for a in announcements %}
+            <li>
+                <strong style="color:var(--c-ink);">{{ a.title }}</strong>
+                <p class="muted" style="margin:8px 0 0;">{{ a.content|truncatewords:36 }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        <a class="btn-secondary" href="{% url 'announcements' %}" style="margin-top:12px;">All announcements</a>
+        {% else %}
+        <p class="muted">No announcements yet.</p>
+        {% endif %}
+    </div>
+    <div class="card card--dash-schedule">
+        <h2>Upcoming schedule</h2>
+        {% if events %}
+        <ul class="list-rows">
+            {% for e in events %}
+            <li class="event-row">
+                <strong>{{ e.title }}</strong>
+                <span>
+                    {{ e.start_time|date:"M j, Y g:i A" }} — {{ e.end_time|date:"g:i A" }}
+                    {% if e.location %} · {{ e.location }}{% endif %}
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="muted">No events scheduled.</p>
+        {% endif %}
+        <a class="btn-secondary" href="{% url 'calendar' %}" style="margin-top:14px;">Open calendar</a>
+    </div>
+    <div class="card card--dash-quick">
+        <h2>Quick links</h2>
+        <p class="muted">Jump to club messaging, documents, and roster.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
+            <a class="btn-primary" href="{% url 'messages' %}">Club messaging</a>
+            <a class="btn-secondary" href="{% url 'members' %}">Members</a>
+            <a class="btn-secondary" href="{% url 'documents' %}">Documents</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

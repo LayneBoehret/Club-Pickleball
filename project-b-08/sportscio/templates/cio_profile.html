@@ -1,0 +1,155 @@
+<!-- 
+ AI Citation
+ Description: Profile page template
+ AI Use: Generated with GPT 5.2 on 2025-03-14.
+ Prompt: "Using this image of a color theme, and this example layout, generate a UI for [all] our tabs"
+ Notes: Used this prompt in Cursor to generate base CSS styling and UI for our pages.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club hub | SportsCIO</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+        .top-nav {
+            background: linear-gradient(135deg, #1e3a5f, #2f5a8a);
+            padding: 14px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px 20px;
+            box-shadow: 0 4px 16px rgba(30, 58, 95, 0.2);
+        }
+        .top-nav a {
+            color: rgba(255,255,255,0.92);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .top-nav a:hover { color: #fff; text-decoration: underline; }
+        .top-nav .brand { color: #fff; font-weight: 800; letter-spacing: 0.04em; margin-right: 12px; }
+        .page { max-width: 1100px; margin: 0 auto; padding: 32px 20px 48px; }
+        .hero {
+            background: white;
+            border-radius: 18px;
+            padding: 28px 28px 24px;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+            margin-bottom: 28px;
+        }
+        .hero h1 { margin: 0 0 8px; font-size: 1.85rem; color: #1e3a5f; }
+        .hero p { margin: 0; color: #6b7280; line-height: 1.55; max-width: 720px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+        }
+        .card h2 {
+            margin: 0 0 12px;
+            font-size: 1.1rem;
+            color: #1e3a5f;
+        }
+        .card ul { margin: 0; padding-left: 1.15rem; color: #4b5563; line-height: 1.55; }
+        .card .soon { color: #9ca3af; font-size: 0.88rem; margin-top: 10px; }
+        .event-mini {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.95rem;
+        }
+        .event-mini:last-child { border-bottom: none; }
+        .event-mini strong { color: #1e3a5f; display: block; margin-bottom: 4px; }
+        .links-row { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; }
+        .links-row a {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #1e3a5f;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .links-row a.secondary { background: #e5e7eb; color: #1e3a5f; }
+        .links-row a:hover { filter: brightness(1.08); }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav" aria-label="Main">
+    <span class="brand">SportsCIO</span>
+    <a href="{% url 'user_profile' %}">My profile</a>
+    <a href="{% url 'cio_profile' %}">Club hub</a>
+    <a href="{% url 'messages' %}">Messages</a>
+    <a href="{% url 'announcements' %}">Announcements</a>
+    {% if is_officer %}
+    <a href="{% url 'exec_profile' %}">Club leader tools</a>
+    {% endif %}
+</nav>
+
+<div class="page">
+    <div class="hero">
+        <h1>Your sports CIO</h1>
+        <p>
+            Central place for members and club leaders: schedule, updates, and messaging.
+            More capabilities (documents, roster, attendance) will plug in here as the semester continues.
+        </p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>Live now</h2>
+            <ul>
+                <li>Events &amp; schedule (see preview below)</li>
+                <li>Announcements &amp; in-app messaging</li>
+            </ul>
+            <div class="links-row">
+                <a href="{% url 'user_profile' %}">Personal dashboard</a>
+                <a href="{% url 'announcements' %}" class="secondary">Announcements</a>
+            </div>
+        </div>
+        <div class="card">
+            <h2>On the roadmap</h2>
+            <ul>
+                <li>Shared documents (S3) with club leader vs member visibility</li>
+                <li>Roster, RSVPs, and attendance</li>
+                <li>Club leader permissions and moderation</li>
+            </ul>
+            <p class="soon">Placeholder sections keep stakeholders aligned with the project brief.</p>
+        </div>
+        <div class="card">
+            <h2>Upcoming events (preview)</h2>
+            {% if events %}
+                {% for event in events %}
+                <div class="event-mini">
+                    <strong>{{ event.title }}</strong>
+                    {{ event.start_time|date:"M j, Y g:i A" }}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="soon">No events yet — club leaders can add them from the executive profile.</p>
+            {% endif %}
+            {% if is_officer %}
+            <div class="links-row">
+                <a href="{% url 'new_event' %}">New event</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

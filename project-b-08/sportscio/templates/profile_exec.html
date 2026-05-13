@@ -1,0 +1,274 @@
+<!-- 
+ AI Citation
+ Description: Exec profile page template
+ AI Use: Generated with GPT 5.2 on 2025-03-14.
+ Prompt: "Using this image of a color theme, and this example layout, generate a UI for [all] our tabs"
+ Notes: Used this prompt in Cursor to generate base CSS styling and UI for our pages.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Profile | SportsCIO</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px 40px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a5f, #2f5a8a);
+            color: white;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 28px rgba(30, 58, 95, 0.22);
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.3rem;
+        }
+
+        .header p {
+            margin: 6px 0 0 0;
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #1e3a5f;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .info-item .label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .info-item .value {
+            font-size: 1.05rem;
+            color: #111827;
+            word-break: break-word;
+        }
+
+        .app-list,
+        .event-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .app-list li,
+        .event-item {
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        button {
+            background: #1e3a5f;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.2);
+        }
+
+        button:hover {
+            background: #2f5a8a;
+        }
+
+        .btn {
+            display: inline-block;
+            background: white;
+            color: #1e3a5f;
+            padding: 16px 24px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+            margin-right: 12px;
+            margin-top: 12px;
+        }
+
+        .btn:hover {
+            box-shadow: 0 8px 20px rgba(30, 58, 95, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: #1e3a5f;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2f5a8a;
+            transform: translateY(-2px);
+        }
+
+        .button-group {
+            margin-top: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            color: #1e3a5f;
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin-bottom: 6px;
+        }
+
+        .event-time {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            color: #6b7280;
+            font-style: italic;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <div class="header">
+        <h1>CIO Executive Profile</h1>
+        <p>Review executive-level information and manage club operations.</p>
+        <p style="margin-top:14px;font-size:0.95rem;"><a href="{% url 'cio_profile' %}" style="color:#fff;font-weight:600;">Club hub</a> — member-facing org page</p>
+    </div>
+
+    <div class="card">
+        <h2>Account Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Username</div>
+                <div class="value">{{ request.user.username }}</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Type</div>
+                <div class="value">{{ request.user.profile.get_role_display }}</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Email</div>
+                <div class="value">{{ request.user.email }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Applications</h2>
+
+        {% if applications %}
+            <ul class="app-list">
+                {% for app in applications %}
+                    <li>{{ app }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-text">No applications available yet.</p>
+        {% endif %}
+
+        <div class="button-group">
+            <a href="{% url 'messages' %}" class="btn">Messages</a>
+            <a href="{% url 'announcements' %}" class="btn">Announcements</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-header">
+            <h2>Schedule</h2>
+            <a href="{% url 'new_event' %}" class="btn-primary">New Event</a>
+        </div>
+
+        {% if events %}
+            <ul class="event-list">
+                {% for event in events %}
+                    <li class="event-item">
+                        <div class="event-title">{{ event.title }}</div>
+                        <div class="event-time">
+                            {{ event.start_time|date:"M j, Y g:i A" }} - {{ event.end_time|date:"M j, Y g:i A" }}
+                        </div>
+                        <div>{{ event.description }}</div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-text">No events have been created yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!-- 
+ AI Citation
+ Description: Documents page template
+ AI Use: Generated with GPT 5.2 on 2025-03-14.
+ Prompt: "Using this image of a color theme, and this example layout, generate a UI for [all] our tabs"
+ Notes: Used this prompt in Cursor to generate base CSS styling and UI for our pages.
+-->
+
+{% extends "base_app.html" %}
+{% block title %}Documents | SportsCIO{% endblock %}
+{% block page_heading %}Documents{% endblock %}
+{% block page_sub %}{% endblock %}
+{% block content %}
+<div class="card-grid">
+    {% if is_privileged %}
+    <div class="card">
+        <h2 style="margin-top:0;">Upload</h2>
+        <p class="muted">Club leaders and superusers can add files for members to download.</p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'documents' %}">
+            {% csrf_token %}
+            <div class="field" style="margin-bottom:14px;">
+                <label for="doc-title" style="display:block;font-weight:600;margin-bottom:6px;">Title</label>
+                <input type="text" id="doc-title" name="title" required placeholder="e.g. Constitution 2026" maxlength="200"
+                       style="width:100%;max-width:400px;padding:12px 14px;border-radius:14px;border:1px solid rgba(81,118,100,0.35);font:inherit;">
+            </div>
+            <div class="field" style="margin-bottom:14px;">
+                <label for="doc-file" style="display:block;font-weight:600;margin-bottom:6px;">File</label>
+                <input type="file" id="doc-file" name="file" required style="font:inherit;">
+            </div>
+            <button type="submit" class="btn-primary">Upload</button>
+        </form>
+    </div>
+    {% endif %}
+    <div class="card" style="{% if is_privileged %}grid-column: 1 / -1;{% endif %}">
+        <h2 style="margin-top:0;">Library</h2>
+        {% if documents %}
+        <ul class="list-rows" style="list-style:none;padding:0;margin:0;">
+            {% for d in documents %}
+            <li style="padding:14px 0;border-bottom:1px solid rgba(202,207,214,0.7);">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                    <a href="{{ d.file.url }}" target="_blank" rel="noopener" style="font-weight:700;color:var(--c-forest);">{{ d.title }}</a>
+                    {% if is_privileged %}
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <a class="btn-secondary" style="padding:8px 12px; border-radius:12px;" href="{% url 'document_edit' d.id %}">Edit</a>
+                        <form method="post" action="{% url 'document_delete' d.id %}" data-confirm="Delete this document?" style="margin:0;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-danger" style="padding:8px 12px; border-radius:12px;">Delete</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                <p class="muted" style="margin:6px 0 0;font-size:0.88rem;">
+                    Uploaded {{ d.created_at|date:"M j, Y" }} by {{ d.uploaded_by.get_full_name|default:d.uploaded_by.username }}
+                </p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="muted">No documents yet.{% if is_privileged %} Upload one above, or register a file in Django admin → <strong>Club documents</strong>.{% else %} Check back when club leaders add files.{% endif %} Putting a file only in Amazon S3 does not create a row in this app, so it won’t show in the list.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
