@@ -164,6 +164,17 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/sportscio/dashboard/"
 LOGOUT_REDIRECT_URL = "/login/"
 
+# --- Allauth Auto-Signup Settings ---
+# Tell Django to use email for logins instead of usernames
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+# Require an email, but DON'T require a username to sign up
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+
+# Automatically sign the user up using the data provided by Google
+SOCIALACCOUNT_AUTO_SIGNUP = True
+
 # --- Email Configuration ---
 # Local Dev (DEBUG=True): Prints to console
 # Production (DEBUG=False): Sends via Gmail SMTP
