@@ -174,7 +174,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 # Automatically sign the user up using the data provided by Google
 SOCIALACCOUNT_AUTO_SIGNUP = True
-
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 # --- Email Configuration ---
 # Local Dev (DEBUG=True): Prints to console
 # Production (DEBUG=False): Sends via Gmail SMTP
