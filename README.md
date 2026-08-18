@@ -16,14 +16,3 @@ The club's president or a designated officer signs in and lands on a similar das
 
 ### User Administrator
 The president is given a User Administrator by a developer via the Django shell (this role cannot be assigned through the app). The sole purpose within the app is that this account will be able to view all users and promote or demote members to Club Leader. They cannot access any other features like announcements or documents, keeping their scope intentionally limited. The Club President should be the only one with access to this account (or a select few members) but all should have other normal accounts to interface with the software.
-
-
-## AI Usage
-
-We used various AI tools throughout this project: **Claude**, **Cursor**, **Gemini**, and **ChatGPT**
-
-The most common use case was debugging errors i.e. feeding server logs or screenshots of features not working and asking why a certain feature didn't work how it should have and getting pointed to the right area of code that was causing the issue. We also used AI to help connect to external services like how to configure S3 with Django and Heroku and setting up Google OAuth with djagno-allauth, and provisioning everything on Heroku's end correctly. 
-
-The main usecase of AI was using Cursor for the UI work. Once we had a base template of all our different tabs and our basic features working on those sections, we gave cursor a preexisting color scheme we decided on and a sketch drawn up on how we wanted each of the views to look and asked to clean it up. So that we could get the cleanliness of a consistent and clean styling across all the views and could focus our effort on actual features for our application.
-
-In all cases the features, architecture, and decisions were built first. AI was brought in after the fact to fix what was broken or clean up what was already there.
